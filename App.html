@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo Genie - AI Logo Generator</title>
+    <style>
+        /* Root Variables */
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #f43f5e;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+        }
+
+        /* General Styles */
+        body {
+            background-color: var(--light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Form Section */
+        .logo-generator {
+            background: white;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        /* Logo Preview */
+        #logoResult {
+            text-align: center;
+            display: none;
+            margin-top: 2rem;
+        }
+
+        #logoResult img {
+            max-width: 300px;
+            margin-top: 1rem;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Logo Genie</h1>
+        <nav>
+            <ul>
+                <li><a href="#generator">Create Logo</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="generator" class="logo-generator">
+        <h2>Generate Your Logo</h2>
+        <form id="logoForm">
+            <label for="businessName">Business Name</label>
+            <input type="text" id="businessName" required placeholder="Enter your business name">
+
+            <label for="industry">Industry</label>
+            <select id="industry" required>
+                <option value="">Select your industry</option>
+                <option value="technology">Technology</option>
+                <option value="food">Food & Restaurant</option>
+                <option value="health">Health & Wellness</option>
+                <option value="education">Education</option>
+                <option value="retail">Retail</option>
+            </select>
+
+            <label for="color">Primary Color</label>
+            <input type="color" id="color" value="#6366f1">
+
+            <label for="style">Logo Style</label>
+            <select id="style" required>
+                <option value="minimal">Minimal</option>
+                <option value="modern">Modern</option>
+                <option value="creative">Creative</option>
+                <option value="classic">Classic</option>
+            </select>
+
+            <label for="description">Brief Description</label>
+            <textarea id="description" required placeholder="Describe your business"></textarea>
+
+            <button type="submit">Generate Logo</button>
+        </form>
+
+        <!-- Loading Animation -->
+        <div class="loading" id="loading">⏳ Generating your logo, please wait...</div>
+
+        <!-- Logo Result -->
+        <div id="logoResult">
+            <h2>Your Logo</h2>
+            <img id="logoPreview" src="" alt="Generated Logo">
+            <p>Download or generate another logo!</p>
+            <button id="downloadLogo">Download Logo</button>
+            <button onclick="resetForm()">Try Again</button>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById('logoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const businessName = document.getElementById('businessName').value;
+            const industry = document.getElementById('industry').value;
+            const color = document.getElementById('color').value;
+            const style = document.getElementById('style').value;
+            const description = document.getElementById('description').value;
+
+            // Show loading animation
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('logoResult').style.display = 'none';
+
+            try {
+                // Send request to Google Colab API
+                const response = await fetch("YOUR_COLAB_API_URL_HERE", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        prompt: `${businessName} logo, ${industry} theme, ${style} style, primary color: ${color}, ${description}`,
+                        width: 512,
+                        height: 512
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.image_url) {
+                    document.getElementById('logoPreview').src = data.image_url;
+                    document.getElementById('logoResult').style.display = 'block';
+                } else {
+                    alert("Error: Could not generate logo.");
+                }
+
+            } catch (error) {
+                alert("Failed to connect to AI server.");
+            }
+
+            // Hide loading animation
+            document.getElementById('loading').classList.remove('show');
+        });
+
+        // Logo Download
+        document.getElementById('downloadLogo').addEventListener('click', function() {
+            const link = document.createElement('a');
+            link.href = document.getElementById('logoPreview').src;
+            link.download = 'logo.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        function resetForm() {
+            document.getElementById('logoForm').reset();
+            document.getElementById('logoResult').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>
