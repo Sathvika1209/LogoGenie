@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo Genie - AI Logo Generator</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #f43f5e;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --success: #10b981;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        
+        header h1::before {
+            content: "✨";
+            margin-right: 0.5rem;
+            font-size: 1.5rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            gap: 2rem;
+        }
+        
+        .hero-content {
+            flex: 1;
+        }
+        
+        .hero h2 {
+            font-size: 2.2rem;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .hero p {
+            font-size: 1rem;
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+        }
+        
+        .hero-image {
+            flex: 1;
+            max-width: 300px;
+        }
+        
+        .hero-image img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn {
+            padding: 0.75rem 1.25rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo-generator {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .logo-generator h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--dark);
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .logo-generator h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+        
+        #logoForm {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            color: var(--dark);
+        }
+        
+        input, select, textarea {
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        button[type="submit"] {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            grid-column: 1 / -1;
+            margin-top: 0.5rem;
+        }
+        
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-icon svg {
+            width: 25px;
+            height: 25px;
+            color: white;
+        }
+        
+        .feature-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .feature-description {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .how-it-works {
+            margin: 3rem 0;
+            text-align: center;
+        }
+        
+        .how-it-works h2 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: var(--dark);
+        }
+        
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .step {
+            flex: 1;
+            padding: 0 1rem;
+            position: relative;
+        }
+        
+        .step:not(:last-child)::after {
+            content: "→";
+            position: absolute;
+            right: -10px;
+            top: 25px;
+            font-size: 1.5rem;
+            color: var(--gray);
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-weight: bold;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+        
+        /* Result preview section */
+        #logoResult {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            text-align: center;
+            display: none;
+        }
+        
+        #logoResult.show {
+            display: block;
+        }
+        
+        .preview-container {
+            width: 200px;
+            height: 200px;
+            margin: 1rem auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .preview-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero-image {
+                order: -1;
+            }
+            
+            #logoForm {
+                grid-template-columns: 1fr;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .steps {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            
+            .step:not(:last-child)::after {
+                content: "↓";
+                position: absolute;
+                right: 50%;
+                top: auto;
+                bottom: -30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Logo Genie</h1>
+        <nav>
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#generator">Create Logo</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Create stunning logos in seconds with AI</h2>
+                <p>Design professional logos for your business instantly with our AI-powered logo generator. No design skills required!</p>
+                <a href="#generator" class="btn btn-primary">Create Your Logo</a>
+            </div>
+
+        </section>
+        
+        <section id="generator" class="logo-generator">
+            <h2>Generate Your Logo</h2>
+            <form id="logoForm">
+                <div class="form-group">
+                    <label for="businessName">Business Name</label>
+                    <input type="text" id="businessName" placeholder="Enter your business name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="industry">Industry</label>
+                    <select id="industry">
+                        <option value="">Select your industry</option>
+                        <option value="technology">Technology</option>
+                        <option value="food">Food & Restaurant</option>
+                        <option value="health">Health & Wellness</option>
+                        <option value="education">Education</option>
+                        <option value="retail">Retail</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="color">Primary Color</label>
+                    <input type="color" id="color" value="#6366f1">
+                </div>
+                
+                <div class="form-group">
+                    <label for="style">Logo Style</label>
+                    <select id="style">
+                        <option value="minimal">Minimal</option>
+                        <option value="modern">Modern</option>
+                        <option value="creative">Creative</option>
+                        <option value="classic">Classic</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="description">Brief Description</label>
+                    <textarea id="description" placeholder="Describe your business and any specific elements you'd like in your logo"></textarea>
+                </div>
+                
+                <button type="submit">Generate Logo</button>
+            </form>
+        </section>
+        
+        <!-- Logo Result Preview (initially hidden) -->
+        <section id="logoResult">
+            <h2>Your Logo</h2>
+            <div class="preview-container">
+                <img id="logoPreview" src="https://via.placeholder.com/150" alt="Generated Logo">
+            </div>
+            <p>Here's your AI-generated logo! You can download it or generate new variations.</p>
+            <div class="preview-actions">
+                <button class="btn btn-primary">Download</button>
+                <button class="btn btn-primary" style="background-color: var(--secondary);">Try Again</button>
+            </div>
+        </section>
+        
+        <section id="features" class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <h3 class="feature-title">AI-Powered Design</h3>
+                <p class="feature-description">Our advanced AI creates beautiful, unique logos tailored to your brand identity.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="feature-title">Instant Results</h3>
+                <p class="feature-description">Generate professional logos in seconds, not days or weeks.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                </div>
+                <h3 class="feature-title">Easy Export</h3>
+                <p class="feature-description">Download your logo in various formats ready for web and print.</p>
+            </div>
+        </section>
+        
+        <section id="how-it-works" class="how-it-works">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Enter Details</h3>
+                    <p>Provide your business name and details</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">AI Generation</h3>
+                    <p>Our AI creates custom logo options</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Download</h3>
+                    <p>Get your logo in multiple formats</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Logo Genie. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        // Simple logo generator form submission
+        document.getElementById('logoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show the result section (in a real app, this would be after API response)
+            setTimeout(function() {
+                document.getElementById('logoResult').classList.add('show');
+                
+                // Scroll to the result
+                document.getElementById('logoResult').scrollIntoView({ behavior: 'smooth' });
+            }, 1000);
+        });
+        
+        // Reset button
+        document.querySelector('.preview-actions button:nth-child(2)').addEventListener('click', function() {
+            document.getElementById('logoResult').classList.remove('show');
+            document.getElementById('generator').scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
